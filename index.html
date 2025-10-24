@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>会员信息录入</title>
     <!-- 引入El样式 -->
     <link rel="stylesheet" href="./element/index.css" />
     <style>
@@ -16,7 +16,7 @@
   </head>
   <body>
     <div id="app">
-      <h1>{{title}}</h1>
+      <h1 style="text-align: center">{{title}}</h1>
       <el-form ref="form" :model="form" label-width="5.5rem" size="mini">
         <template v-for="v,i of form">
           <template v-if="i == 'requirementsForPartner'">
@@ -78,7 +78,7 @@
     var app = new Vue({
       el: "#app",
       data: {
-        title: "welcome hello",
+        title: "会员信息录入",
         form: {},
         visible: false,
       },
