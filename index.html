@@ -48,23 +48,10 @@
           </template>
           <template v-else>
             <el-form-item :label="v[0]">
-              <template v-if="i === 'maritalStatus'">
-                <el-select
-                  v-model="v[2]"
-                  :placeholder="`请选择${v[0]}`"
-                  style="width: 100%"
-                >
-                  <el-option value="未婚"></el-option>
-                  <el-option value="离异"></el-option>
-                  <el-option value="丧偶"></el-option>
-                </el-select>
-              </template>
-              <template v-else>
-                <el-input
-                  :placeholder="`请输入${v[0]}`"
-                  v-model="v[2]"
-                ></el-input>
-              </template>
+              <el-input
+                :placeholder="`请输入${v[0]}`"
+                v-model="v[2]"
+              ></el-input>
             </el-form-item>
           </template>
         </template>
@@ -152,7 +139,11 @@
             personality: ["性格", "Tính cách"],
             personalIncome: ["个人收入", "Thu nhập cá nhân"],
             householdIncome: ["家庭收入", "Thu nhập gia đình"],
-            maritalStatus: ["婚姻状况", "Tình trạng hôn nhân"],
+            maritalStatus: [
+              "婚姻状况",
+              "Tình trạng hôn nhân",
+              "未婚，离异，丧偶，不带孩子",
+            ],
             parentsSituation: ["父母情况", "Tình trạng phụ huynh"],
             healthCondition: ["身体状况", "Tình trạng sức khỏe"],
             housingSituation: ["住房情况", "Tình trạng nhà ở"],
@@ -171,7 +162,7 @@
             maritalHistory2: [
               "婚史",
               "Lịch sử hôn nhân",
-              "未婚，离异，不带孩子",
+              "未婚，离异，丧偶，不带孩子",
             ],
           };
         },
@@ -228,4 +219,3 @@
     });
   </script>
 </html>
-
