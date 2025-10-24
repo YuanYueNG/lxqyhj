@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 引入El样式 -->
+    <link rel="stylesheet" href="./element/index.css" />
+    <style>
+      .el-form-item--mini.el-form-item,
+      .el-form-item--small.el-form-item,
+      .el-form-item-margin-button {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app">
+      <h1>{{title}}</h1>
+      <el-form ref="form" :model="form" label-width="5.5rem" size="mini">
+        <template v-for="v,i of form">
+          <template v-if="i == 'requirementsForPartner'">
+            <el-alert
+              class="el-form-item-margin-button"
+              center
+              type="error"
+              effect="dark"
+              :title="form.requirementsForPartner[0]"
+              :closable="false"
+            >
+            </el-alert>
+          </template>
+          <template v-else>
+            <el-form-item :label="v[0]">
+              <template v-if="i === 'maritalStatus'">
+                <el-select
+                  v-model="v[2]"
+                  :placeholder="`请选择${v[0]}`"
+                  style="width: 100%"
+                >
+                  <el-option value="未婚"></el-option>
+                  <el-option value="离异"></el-option>
+                  <el-option value="丧偶"></el-option>
+                </el-select>
+              </template>
+              <template v-else>
+                <el-input
+                  :placeholder="`请输入${v[0]}`"
+                  v-model="v[2]"
+                ></el-input>
+              </template>
+            </el-form-item>
+          </template>
+        </template>
+        <div style="text-align: center">
+          <el-button
+            style="width: 48%"
+            icon="el-icon-document-copy"
+            type="primary"
+            @click="onCopy"
+            >复制</el-button
+          >
+          <el-button
+            style="width: 48%"
+            icon="el-icon-refresh"
+            type="warning"
+            @click="onRefresh"
+            >刷新</el-button
+          >
+        </div>
+      </el-form>
+    </div>
+  </body>
+
+  <script src="./vue/vue.js"></script>
+  <script src="./element/index.js"></script>
+  <script>
+    var app = new Vue({
+      el: "#app",
+      data: {
+        title: "welcome hello",
+        form: {},
+        visible: false,
+      },
+      created() {
+        this.createForm();
+        this.getFormToWeb();
+      },
+
+      watch: {
+        form: {
+          deep: true,
+          handler(newVal, oldVal) {
+            this.setFormToWeb();
+          },
+        },
+      },
+      methods: {
+        onCopy() {
+          let text = "";
+          for (let key in this.form) {
+            let value = this.form[key];
+            if (key === "requirementsForPartner") {
+              text += `===${value[0]}${
+                !this.isEmpty(value[1]) ? `(${value[1]})` : ``
+              }===\n`;
+              continue;
+            }
+            if (this.isEmpty(value[2])) continue;
+            text += `${value[0]}${
+              !this.isEmpty(value[1]) ? `(${value[1]})` : ``
+            }: ${value[2]};\n`;
+          }
+          console.log(text);
+          this.copyText(text);
+          this.setFormToWeb();
+        },
+        createForm() {
+          this.form = {
+            name: ["姓名", "Tên"],
+            age: ["年龄", "Tuổi"],
+            height: ["身高", "Chiều cao"],
+            weight: ["体重", "Cân nặng"],
+            occupation: ["工作", "Công việc"],
+            educationLevel: ["文化程度", "Trình độ học vấn"],
+            personality: ["性格", "Tính cách"],
+            personalIncome: ["个人收入", "Thu nhập cá nhân"],
+            householdIncome: ["家庭收入", "Thu nhập gia đình"],
+            maritalStatus: ["婚姻状况", "Tình trạng hôn nhân"],
+            parentsSituation: ["父母情况", "Tình trạng phụ huynh"],
+            healthCondition: ["身体状况", "Tình trạng sức khỏe"],
+            housingSituation: ["住房情况", "Tình trạng nhà ở"],
+            whetherOwnsACar: ["是否有车", "Có xe không"],
+            whetherHasLoans: ["是否有贷款", "Có nợ không"],
+            familyLocation: ["家庭所在地", "Nơi ở của gia đình"],
+            contactPhoneNumber: ["联系电话", "Số điện thoại liên hệ"],
+            requirementsForPartner: [
+              "★☆对另一半的要求☆★",
+              "★☆Yêu cầu đối với bạn đời☆★",
+            ],
+            age2: ["年龄", "Tuổi"],
+            height2: ["身高", "Chiều cao"],
+            weight2: ["体重", "Cân nặng"],
+            income2: ["收入", "Thu nhập"],
+            maritalHistory2: [
+              "婚史",
+              "Lịch sử hôn nhân",
+              "未婚，离异，不带孩子",
+            ],
+          };
+        },
+        onRefresh() {
+          this.$confirm("此操作将删除填写的内容, 是否继续?", "提示", {
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+            type: "warning",
+          }).then(() => {
+            this.$message({
+              type: "success",
+              message: "已刷新!",
+            });
+            this.createForm();
+          });
+        },
+        isEmpty(value) {
+          // 判断 null 或 undefined
+          if (value === null || value === undefined) return true;
+          // 判断空字符串
+          if (typeof value === "string" && value.trim() === "") return true;
+          // 判断空数组
+          if (Array.isArray(value) && value.length === 0) return true;
+          // 判断空对象
+          if (typeof value === "object" && Object.keys(value).length === 0)
+            return true;
+          return false;
+        },
+        copyText(text) {
+          const textarea = document.createElement("textarea");
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand("Copy");
+          document.body.removeChild(textarea);
+          this.$message.success("已复制到剪贴板！");
+        },
+        getFormToWeb() {
+          let textArr = [];
+          localStorage.getItem("lxqyForm") &&
+            (textArr = JSON.parse(localStorage.getItem("lxqyForm")));
+          textArr.length > 0 &&
+            Object.keys(this.form).forEach(
+              (key, i) => (this.form[key][2] = textArr[i])
+            );
+        },
+        setFormToWeb() {
+          let textArr = [];
+          for (let key in this.form) {
+            let value = this.form[key];
+            textArr.push(!this.isEmpty(value[2]) ? value[2] : "");
+          }
+          localStorage.setItem("lxqyForm", JSON.stringify(textArr));
+        },
+      },
+    });
+  </script>
+</html>
