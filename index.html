@@ -14,17 +14,25 @@
       .el-form-item--mini.el-form-item,
       .el-form-item--small.el-form-item,
       .el-form-item-margin-button {
-        margin-bottom: 8px;
+        margin-bottom: 1em;
       }
       .el-input--mini .el-input__inner {
         text-align: left;
+      }
+      .el-form-item--mini .el-form-item__content,
+      .el-form-item--mini .el-form-item__label,
+      .el-form-item__label,
+      .el-form-item__content {
+        line-height: normal;
+        color: black;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
     <div id="app">
       <h1 style="text-align: center">{{title}}</h1>
-      <el-form ref="form" :model="form" label-width="5.5rem" size="mini">
+      <el-form ref="form" :model="form">
         <template v-for="v,i of form">
           <template v-if="i === 'requirementsForPartner'">
             <el-alert
@@ -50,17 +58,6 @@
                   <el-option value="丧偶"></el-option>
                 </el-select>
               </template>
-              <template
-                v-else-if="['age','age2','height','height2','weight','weight2'].includes(i)"
-              >
-                <el-input-number
-                  style="width: 100%"
-                  v-model="v[2]"
-                  :placeholder="`请输入${v[0]}`"
-                  :precision="2"
-                  :step="1"
-                ></el-input-number>
-              </template>
               <template v-else>
                 <el-input
                   :placeholder="`请输入${v[0]}`"
@@ -78,13 +75,18 @@
             @click="onCopy"
             >复制</el-button
           >
-          <el-button
-            style="width: 40%"
-            icon="el-icon-refresh"
-            type="warning"
-            @click="onRefresh"
-            >刷新</el-button
+          <el-popconfirm
+            title="此操作将删除填写的内容, 是否继续？"
+            @confirm="onRefresh"
           >
+            <el-button
+              style="width: 40%"
+              slot="reference"
+              icon="el-icon-refresh"
+              type="warning"
+              >刷新</el-button
+            >
+          </el-popconfirm>
         </div>
       </el-form>
     </div>
@@ -173,17 +175,12 @@
           };
         },
         onRefresh() {
-          this.$confirm("此操作将删除填写的内容, 是否继续?", "提示", {
-            confirmButtonText: "确定",
-            cancelButtonText: "取消",
-            type: "warning",
-          }).then(() => {
-            this.$message({
-              type: "success",
-              message: "已刷新!",
-            });
-            this.createForm();
+          this.$message({
+            type: "success",
+            message: "已刷新!",
           });
+          this.createForm();
+          document.documentElement.scrollTop = 0;
         },
         isEmpty(value) {
           // 判断 null 或 undefined
