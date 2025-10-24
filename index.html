@@ -16,6 +16,9 @@
       .el-form-item-margin-button {
         margin-bottom: 8px;
       }
+      .el-input--mini .el-input__inner {
+        text-align: left;
+      }
     </style>
   </head>
   <body>
@@ -23,7 +26,7 @@
       <h1 style="text-align: center">{{title}}</h1>
       <el-form ref="form" :model="form" label-width="5.5rem" size="mini">
         <template v-for="v,i of form">
-          <template v-if="i == 'requirementsForPartner'">
+          <template v-if="i === 'requirementsForPartner'">
             <el-alert
               class="el-form-item-margin-button"
               center
@@ -46,6 +49,17 @@
                   <el-option value="离异"></el-option>
                   <el-option value="丧偶"></el-option>
                 </el-select>
+              </template>
+              <template
+                v-else-if="['age','age2','height','height2','weight','weight2'].includes(i)"
+              >
+                <el-input-number
+                  style="width: 100%"
+                  v-model="v[2]"
+                  :placeholder="`请输入${v[0]}`"
+                  :precision="2"
+                  :step="1"
+                ></el-input-number>
               </template>
               <template v-else>
                 <el-input
@@ -107,15 +121,18 @@
           for (let key in this.form) {
             let value = this.form[key];
             if (key === "requirementsForPartner") {
-              text += `===${value[0]}${
-                !this.isEmpty(value[1]) ? `(${value[1]})` : ``
-              }===\n`;
+              // text += `===${value[0]}${
+              //   !this.isEmpty(value[1]) ? `(${value[1]})` : ``
+              // }===\n`;
+              !this.isEmpty(text) && (text += "\n");
+              text += `===${value[0]}===\n\n`;
               continue;
             }
             if (this.isEmpty(value[2])) continue;
-            text += `${value[0]}${
-              !this.isEmpty(value[1]) ? `(${value[1]})` : ``
-            }: ${value[2]};\n`;
+            // text += `${value[0]}${
+            //   !this.isEmpty(value[1]) ? `(${value[1]})` : ``
+            // }: ${value[2]};\n`;
+            text += `${value[0]}: ${value[2]};\n`;
           }
           console.log(text);
           this.copyText(text);
@@ -195,7 +212,10 @@
             (textArr = JSON.parse(localStorage.getItem("lxqyForm")));
           textArr.length > 0 &&
             Object.keys(this.form).forEach(
-              (key, i) => (this.form[key][2] = textArr[i])
+              (key, i) =>
+                (this.form[key][2] = this.isEmpty(textArr[i])
+                  ? undefined
+                  : textArr[i])
             );
         },
         setFormToWeb() {
